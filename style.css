@@ -563,3 +563,82 @@ input[type="radio"]:focus-visible {
     background-color: var(--wp--preset--color--popover) !important;
   }
 }
+
+
+/* ==========================================================================
+   WooCommerce Styles
+   ========================================================================== */
+
+.wc-block-components-drawer:after,
+.wc-block-mini-cart__footer:after {
+  border-color: var(--wp--preset--color--border);
+  opacity: 1;
+}
+
+.wp-block-woocommerce-mini-cart-title-block.wc-block-mini-cart__title {
+  font-size: 1rem;
+}
+
+.wc-block-components-quantity-selector:after {
+  display: none;
+}
+
+.wc-block-components-quantity-selector {
+  border-radius: 0;
+}
+
+.wc-block-components-quantity-selector
+  .wc-block-components-quantity-selector__button {
+  border: 1px solid var(--wp--preset--color--input);
+  border-radius: calc(var(--radius) - 2px);
+  opacity: 1;
+  background-color: var(--wp--preset--color--background);
+  box-shadow: 0 1px 2px 0 var(--tw-shadow-color, #0000000d);
+}
+
+.dark
+  .wc-block-components-quantity-selector
+  .wc-block-components-quantity-selector__button {
+  background-color: color-mix(
+    in oklab,
+    var(--wp--preset--color--input) 30%,
+    transparent
+  );
+}
+
+.wc-block-components-quantity-selector
+  input.wc-block-components-quantity-selector__input {
+  background-color: transparent;
+  padding: 6px 0;
+}
+
+.wc-block-cart-items__row {
+  background-color: var(--wp--preset--color--card);
+  color: var(--wp--preset--color--card-foreground);
+  border-radius: calc(var(--radius) + 4px);
+  overflow: hidden;
+  border: 1px solid var(--wp--preset--color--border);
+  padding: 0 !important;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.wc-block-cart-items__row:last-child {
+  margin-bottom: 0;
+}
+
+.wc-block-cart-items__row .wc-block-cart-item__product,
+.wc-block-cart-items__row .wc-block-cart-item__total {
+  padding: 1rem !important;
+}
+
+.wc-block-cart-items__row .wc-block-cart-item__image {
+  padding: 0 !important;
+}
+.wc-block-cart-items__row .wc-block-components-product-metadata {
+  color: var(--wp--preset--color--muted-foreground);
+}
+.wc-block-cart-items__row .wc-block-components-product-price__regular {
+  font-weight: 400;
+  color: var(--wp--preset--color--muted-foreground);
+}

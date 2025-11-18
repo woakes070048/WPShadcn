@@ -39,8 +39,6 @@ $darkmode_image_url = get_template_directory_uri() . '/assets/images/dark-mode.p
 			<!-- wp:navigation {"overlayBackgroundColor":"background","overlayTextColor":"foreground","className":"is-style-pill","style":{"spacing":{"blockGap":"var:preset|spacing|5"}},"layout":{"type":"flex","justifyContent":"right"}} /-->
 
 			<?php if ( function_exists( 'WC' ) ) : ?>
-			<!-- wp:woocommerce/customer-account {"displayStyle":"icon_only","iconStyle":"line","iconClass":"wc-block-customer-account__account-icon","style":{"typography":{"fontSize":"var(\u002d\u002dwp\u002d\u002dpreset\u002d\u002dfont-size\u002d\u002dsm)"}}} /-->
-
 			<!-- wp:woocommerce/mini-cart {"cartAndCheckoutRenderStyle":"removed","style":{"typography":{"fontSize":"var:preset|font-size|sm"}}} /-->
 			 <?php endif; ?>
 		</div>

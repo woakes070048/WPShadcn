@@ -415,6 +415,11 @@
           "blockGap": "var:preset|spacing|2"
         },
         "elements": {
+          "link": {
+            "typography": {
+              "lineHeight": "20px"
+            }
+          },
           "submenu": {
             "color": {
               "background": "var:preset|color|popover",

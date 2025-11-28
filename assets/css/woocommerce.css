@@ -11,14 +11,64 @@
   border-top-color: var(--border);
 }
 
+/* ==========================================================================
+WooCommerce Inputs Styles
+========================================================================== */
+.wc-block-components-text-input,
+.wc-blocks-components-select__container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wc-block-components-form
+  .wc-block-components-text-input
+  input:-webkit-autofill
+  + label,
+.wc-block-components-form .wc-block-components-text-input.is-active label,
+.wc-block-components-text-input input:-webkit-autofill + label,
+.wc-block-components-text-input.is-active label {
+  transform: none;
+}
+
+.wc-block-components-form .wc-block-components-text-input label,
+.wc-block-components-text-input label,
+.wc-blocks-components-select .wc-blocks-components-select__label {
+  position: relative;
+  top: unset;
+  left: unset;
+  transform: none;
+  max-width: none;
+  order: -1;
+  font-size: 0.875rem;
+}
+
+.wc-block-components-address-form__address_2-toggle {
+  font-size: 0.875rem;
+}
+
+.wc-blocks-components-select .wc-blocks-components-select__container {
+  height: unset;
+  background: unset;
+  border-radius: unset;
+}
+
+.wc-blocks-components-select .wc-blocks-components-select__container svg {
+  display: none;
+}
+
+.wc-block-components-checkbox__mark {
+  display: none;
+}
+
+/* ==========================================================================
+WooCommerce Cart Styles
+========================================================================== */
+
 .wc-block-mini-cart__badge {
   background-color: var(--foreground);
   color: var(--background);
 }
-
-/* ==========================================================================
-   WooCommerce Styles
-   ========================================================================== */
 
 .wc-block-components-drawer:after,
 .wc-block-mini-cart__footer:after {
@@ -45,6 +95,8 @@
   opacity: 1;
   background-color: var(--background);
   box-shadow: 0 1px 2px 0 var(--tw-shadow-color, #0000000d);
+  width: 30px;
+  height: 30px;
 }
 
 .dark
@@ -55,8 +107,13 @@
 
 .wc-block-components-quantity-selector
   input.wc-block-components-quantity-selector__input {
-  background-color: transparent;
-  padding: 6px 0;
+  height: unset;
+}
+
+.wc-block-components-quantity-selector
+  input.wc-block-components-quantity-selector__input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .wc-block-cart-items__row {

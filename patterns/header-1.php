@@ -36,7 +36,7 @@ $darkmode_image_url = get_template_directory_uri() . '/assets/images/dark-mode.p
 					style="width:20px" /></figure>
 			<!-- /wp:image -->
 
-			<!-- wp:navigation {"overlayBackgroundColor":"background","overlayTextColor":"foreground","className":"is-style-pill","style":{"spacing":{"blockGap":"var:preset|spacing|5"}},"layout":{"type":"flex","justifyContent":"right"}} /-->
+			<!-- wp:navigation {"overlayBackgroundColor":"background","overlayTextColor":"foreground","className":"is-style-pill","style":{"spacing":{"blockGap":"0"}},"layout":{"type":"flex","justifyContent":"right"}} /-->
 
 			<?php if ( function_exists( 'WC' ) ) : ?>
 			<!-- wp:woocommerce/mini-cart {"cartAndCheckoutRenderStyle":"removed","style":{"typography":{"fontSize":"var:preset|font-size|sm"}}} /-->

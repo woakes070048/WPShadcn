@@ -662,6 +662,16 @@
       "area": "footer",
       "name": "footer",
       "title": "Footer"
+    },
+    {
+      "area": "checkout-header",
+      "name": "checkout-header",
+      "title": "Checkout Header"
+    },
+    {
+      "area": "checkout-footer",
+      "name": "checkout-footer",
+      "title": "Checkout Footer"
     }
   ]
 }

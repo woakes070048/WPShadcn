@@ -6,6 +6,7 @@
 /* Import the same CSS variables as the frontend */
 :root {
   --radius: 0.625rem;
+  --spacing: 0.25rem;
   --wp--preset--color--border: #e5e5e5;
   --wp--preset--color--input: #e5e5e5;
   --wp--preset--color--ring: #a1a1a1;

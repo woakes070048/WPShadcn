@@ -20,6 +20,7 @@ Tags: full-site-editing, custom-colors, custom-logo, custom-menu, editor-style, 
 
 :root {
   --radius: 0.625rem;
+  --spacing: 0.25rem;
   --wp--preset--color--border: #e5e5e5;
   --wp--preset--color--input: #e5e5e5;
   --wp--preset--color--ring: #a1a1a1;
@@ -122,6 +123,10 @@ Tags: full-site-editing, custom-colors, custom-logo, custom-menu, editor-style, 
 
 body {
   font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+button[disabled] {
+  opacity: 0.5;
 }
 
 /* ==========================================================================
@@ -440,7 +445,7 @@ select,
   padding: 0.25rem 0.75rem !important;
   font-size: 0.875rem !important;
   line-height: 1.25/0.875 !important;
-  height: calc(0.25rem * 9);
+  height: calc(var(--spacing) * 9);
   box-shadow: 0 0.0625rem 0.125rem 0 rgb(0 0 0 / 0.05);
   transition-property: border-color;
   transition-timing-function: var(--default-transition-timing-function);
@@ -568,11 +573,11 @@ input[type="checkbox"],
   .wc-block-components-checkbox__input[type="checkbox"],
 input[type="radio"],
 .wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="radio"] {
+  .wc-block-components-checkbox__input[type="radio"],
+.wc-block-components-radio-control .wc-block-components-radio-control__input {
   display: inline-flex;
   appearance: none;
   -webkit-appearance: none;
-  position: relative;
   cursor: inherit;
   width: 16px;
   height: 16px;
@@ -587,21 +592,28 @@ input[type="radio"],
   box-shadow: none;
 }
 
+input[type="checkbox"],
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"] {
+  position: relative;
+}
+
 input[type="checkbox"]:checked,
 .wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="checkbox"]:checked,
-input[type="radio"]:checked,
-.wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="radio"]:checked {
+  .wc-block-components-checkbox__input[type="checkbox"]:checked {
   background-color: var(--primary);
+}
+
+input[type="radio"],
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"],
+.wc-block-components-radio-control .wc-block-components-radio-control__input {
+  border-radius: 100%;
 }
 
 input[type="checkbox"]:checked::after,
 .wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="checkbox"]:checked::after,
-input[type="radio"]:checked::after,
-.wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="radio"]:checked::after {
+  .wc-block-components-checkbox__input[type="checkbox"]:checked::after {
   content: "";
   position: absolute;
   left: 5px;
@@ -615,12 +627,43 @@ input[type="radio"]:checked::after,
   transform: rotate(45deg);
 }
 
+input[type="radio"]:checked,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:checked,
+.wc-block-components-radio-control
+  .wc-block-components-radio-control__input:checked {
+  border-color: var(--border);
+}
+
+input[type="radio"]:checked::before,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:checked::before,
+.wc-block-components-radio-control
+  .wc-block-components-radio-control__input:checked::before {
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 2);
+  min-width: calc(var(--spacing) * 2);
+  min-height: calc(var(--spacing) * 2);
+  border-radius: 100%;
+  background-color: var(--primary);
+}
+
 input[type="checkbox"]:focus-visible,
+input[type="checkbox"]:focus,
 .wc-block-components-checkbox
   .wc-block-components-checkbox__input[type="checkbox"]:focus-visible,
-input[type="radio"]:focus-visible,
 .wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="radio"]:focus-visible {
+  .wc-block-components-checkbox__input[type="checkbox"]:focus,
+input[type="radio"]:focus-visible,
+input[type="radio"]:focus,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:focus-visible,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:focus,
+.wc-block-components-radio-control
+  .wc-block-components-radio-control__input:focus-visible,
+.wc-block-components-radio-control
+  .wc-block-components-radio-control__input:focus {
   outline: none;
 }
 
@@ -681,8 +724,12 @@ input[type="radio"]:focus-visible,
   .wc-block-components-checkbox
   .wc-block-components-checkbox__input[type="checkbox"],
 input[type="radio"],
-.wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="radio"] {
+.dark
+  .wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"],
+.dark
+  .wc-block-components-radio-control
+  .wc-block-components-radio-control__input {
   background-color: color-mix(in oklab, var(--input) 30%, transparent);
 }
 
@@ -794,10 +841,6 @@ input[type="radio"],
 .dark input[type="checkbox"]:checked,
 .dark
   .wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="checkbox"]:checked,
-.dark input[type="radio"]:checked,
-.dark
-  .wc-block-components-checkbox
-  .wc-block-components-checkbox__input[type="radio"]:checked {
+  .wc-block-components-checkbox__input[type="checkbox"]:checked {
   background-color: var(--primary);
 }

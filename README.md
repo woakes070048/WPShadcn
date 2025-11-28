@@ -112,6 +112,13 @@ shadcn/
 - ✅ Update Navigation style
 - ✅ Update layout
 
+### Version 1.0.4
+- ✅ Added: Support WooCommerce Cart/Checkout template
+- ✅ Added: WooCommerce Checkout header
+- ✅ Added: New patterns (404 section, Hero section, CTA section, ...)
+- ✅ Updated: Navigation styles
+- ✅ Fixed: Header menu issue
+
 ## 🎓 Built With
 
 - **[Shadcn UI](https://shadcn.com/)** - Component design principles

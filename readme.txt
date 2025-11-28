@@ -3,9 +3,9 @@ Contributors: yaycommerce
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Tags: blog, block-patterns, full-site-editing
-Tested up to: 6.8.2
+Tested up to: 6.8
 Requires PHP: 5.3
-Stable tag: 1.3
+Stable tag: 1.0.4
 
 WP Shadcn is a modern, lightweight WordPress theme built with Shadcn UI components and contemporary web technologies.
 
@@ -68,6 +68,13 @@ A: When creating or editing pages/posts, look for the "Patterns" section in the 
 = 1.0.2 =
 * Update Navigation style
 * Update layout
+
+= 1.0.4 =
+* Added: Support WooCommerce Cart/Checkout template
+* Added: WooCommerce Checkout header
+* Added: New patterns (404 section, Hero section, CTA section, ...)
+* Updated: Navigation styles
+* Fixed: Header menu issue
 
 == Support ==
 

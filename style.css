@@ -157,11 +157,7 @@ body {
 }
 
 .wp-block-button.is-style-secondary .wp-block-button__link:hover {
-  background-color: color-mix(
-    in oklab,
-    var(--secondary) 80%,
-    transparent
-  );
+  background-color: color-mix(in oklab, var(--secondary) 80%, transparent);
 }
 
 .wp-block-button.is-style-destructive .wp-block-button__link {
@@ -170,11 +166,7 @@ body {
 }
 
 .wp-block-button.is-style-destructive .wp-block-button__link:hover {
-  background-color: color-mix(
-    in oklab,
-    var(--destructive) 90%,
-    transparent
-  );
+  background-color: color-mix(in oklab, var(--destructive) 90%, transparent);
 }
 
 .wp-block-button.is-style-ghost .wp-block-button__link {
@@ -188,311 +180,7 @@ body {
 }
 
 /* ==========================================================================
-   Input Styles
-   ========================================================================== */
-
-.wp-block-search__input,
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="search"],
-input[type="url"],
-input[type="tel"],
-input[type="number"],
-textarea,
-.wc-block-components-textarea,
-.wc-block-components-form .wc-block-components-text-input input[type="email"],
-.wc-block-components-form .wc-block-components-text-input input[type="number"],
-.wc-block-components-form
-  .wc-block-components-text-input
-  input[type="password"],
-.wc-block-components-form .wc-block-components-text-input input[type="tel"],
-.wc-block-components-form .wc-block-components-text-input input[type="text"],
-.wc-block-components-form .wc-block-components-text-input input[type="url"],
-.wc-block-components-text-input input[type="email"],
-.wc-block-components-text-input input[type="number"],
-.wc-block-components-text-input input[type="password"],
-.wc-block-components-text-input input[type="tel"],
-.wc-block-components-text-input input[type="text"],
-.wc-block-components-text-input input[type="url"] {
-  background-color: transparent;
-  color: var(--foreground);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 2px);
-  padding: 0.5rem 0.75rem !important;
-  font-size: 0.875rem;
-  transition-property: border-color;
-  transition-timing-function: var(--default-transition-timing-function);
-  transition-duration: var(--default-transition-duration);
-  height: unset;
-}
-
-.wc-block-components-text-input,
-.wc-blocks-components-select__container {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.wc-block-components-address-form__address_2-toggle {
-  font-size: 0.875rem;
-}
-
-.wc-block-components-form
-  .wc-block-components-text-input
-  input:-webkit-autofill
-  + label,
-.wc-block-components-form .wc-block-components-text-input.is-active label,
-.wc-block-components-text-input input:-webkit-autofill + label,
-.wc-block-components-text-input.is-active label {
-  transform: none;
-}
-
-.wc-block-components-form .wc-block-components-text-input label,
-.wc-block-components-text-input label,
-.wc-blocks-components-select .wc-blocks-components-select__label {
-  position: relative;
-  top: unset;
-  left: unset;
-  transform: none;
-  max-width: none;
-  order: -1;
-  font-size: 0.875rem;
-}
-
-.wc-blocks-components-select .wc-blocks-components-select__container {
-  height: unset;
-  background: unset;
-  border-radius: unset;
-}
-
-.wc-blocks-components-select .wc-blocks-components-select__container svg {
-  display: none;
-}
-
-/* ==========================================================================
-   Select Styles
-   ========================================================================== */
-select,
-.wc-blocks-components-select .wc-blocks-components-select__select {
-  /* Layout & Sizing */
-  height: 2.25rem; /* 36px */
-  width: 100%;
-  min-width: 0;
-  padding: 0.5rem 2.25rem 0.5rem 0.75rem; /* py-2 px-3 pr-9 */
-
-  /* Appearance */
-  appearance: none;
-  border-radius: calc(var(--radius) - 2px);
-  border: 1px solid var(--input);
-  background-color: transparent;
-
-  /* Typography */
-  font-size: 0.875rem; /* text-sm */
-  font-family: inherit;
-  line-height: 1.5;
-
-  /* Colors */
-  color: var(--foreground);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='oklch(80.6% 0 0)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-  background-position: right 0.75rem center;
-  background-repeat: no-repeat;
-  background-size: 0.75rem auto;
-
-  /* Effects */
-  box-shadow: 0 0.0625rem 0.125rem 0 rgb(0 0 0 / 0.05);
-  transition-property: color, box-shadow, border-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-
-  /* Reset */
-  outline: none;
-}
-
-/**
- * Select Placeholder State
- */
-select::placeholder {
-  color: var(--muted-foreground);
-}
-
-/**
- * Select Selection/Highlight
- */
-select::selection {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-/**
- * Select Disabled State
- */
-select:disabled {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.dark select,
-.dark .wc-blocks-components-select .wc-blocks-components-select__select {
-  background-color: color-mix(
-    in oklab,
-    var(--input) 30%,
-    transparent
-  );
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='oklch(100% 0 0/.15)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-}
-
-.dark select:hover:not(:disabled),
-.dark .wc-blocks-components-select .wc-blocks-components-select__select:hover:not(:disabled) {
-  background-color: color-mix(
-    in oklab,
-    var(--input) 50%,
-    transparent
-  );
-}
-
-/**
- * Select Options Styling (for browsers that support it)
- * Note: Limited styling support across browsers
- */
-select option {
-  background-color: var(--background);
-  color: var(--foreground);
-  padding: 0.5rem;
-}
-
-select option:checked {
-  background: linear-gradient(
-    var(--primary),
-    var(--primary)
-  );
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-.wp-block-search__input:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-.wc-block-components-textarea:focus-visible,
-select:focus-visible {
-  outline: none;
-  border-color: var(--ring) !important;
-  box-shadow: 0 0 0 3px color-mix(in oklab, oklch(70.8% 0 0) 50%, transparent);
-}
-
-input[type="checkbox"],
-input[type="radio"] {
-  display: inline-flex;
-  appearance: none;
-  -webkit-appearance: none;
-  position: relative;
-  cursor: inherit;
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  min-height: 16px;
-  background-color: transparent;
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--border);
-  border-radius: 4px;
-  color: var(--primary-foreground);
-  box-shadow: none;
-}
-
-input[type="checkbox"]:checked,
-input[type="radio"]:checked {
-  background-color: var(--primary);
-}
-
-input[type="checkbox"]:checked::after,
-input[type="radio"]:checked::after {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 1.5px;
-  width: 3.5px;
-  height: 8px;
-  border: solid currentColor;
-  border-width: 0 1px 1px 0;
-  -webkit-transform: rotate(45deg) translate(-50%, -50%);
-  -ms-transform: rotate(45deg) translate(-50%, -50%);
-  transform: rotate(45deg);
-}
-
-input[type="checkbox"]:focus-visible,
-input[type="radio"]:focus-visible {
-  outline: none;
-}
-
-.dark .wp-block-search__input,
-.dark input[type="text"],
-.dark input[type="email"],
-.dark input[type="password"],
-.dark input[type="search"],
-.dark input[type="url"],
-.dark input[type="tel"],
-.dark input[type="number"],
-.dark textarea,
-.dark .wc-block-components-textarea,
-.dark select,
-.dark .wc-blocks-components-select .wc-blocks-components-select__select
-.dark input[type="checkbox"],
-.dark input[type="radio"],
-.dark
-  .wc-block-components-form
-  .wc-block-components-text-input
-  input[type="email"],
-.dark
-  .wc-block-components-form
-  .wc-block-components-text-input
-  input[type="number"],
-.dark
-  .wc-block-components-form
-  .wc-block-components-text-input
-  input[type="password"],
-.dark
-  .wc-block-components-form
-  .wc-block-components-text-input
-  input[type="tel"],
-.dark
-  .wc-block-components-form
-  .wc-block-components-text-input
-  input[type="text"],
-.dark
-  .wc-block-components-form
-  .wc-block-components-text-input
-  input[type="url"],
-.dark .wc-block-components-text-input input[type="email"],
-.dark .wc-block-components-text-input input[type="number"],
-.dark .wc-block-components-text-input input[type="password"],
-.dark .wc-block-components-text-input input[type="tel"],
-.dark .wc-block-components-text-input input[type="text"],
-.dark .wc-block-components-text-input input[type="url"] {
-  background-color: color-mix(
-    in oklab,
-    var(--input) 30%,
-    transparent
-  );
-}
-
-.dark input[type="checkbox"]:checked,
-.dark input[type="radio"]:checked {
-  background-color: var(--primary);
-}
-
-.dark .wp-block-search__input:focus-visible,
-.dark input:focus-visible,
-.dark textarea:focus-visible,
-.dark .wc-block-components-textarea:focus-visible,
-.dark select:focus-visible {
-  border-width: 1px !important;
-  box-shadow: 0 0 0 3px color-mix(in oklab, oklch(55.6% 0 0) 50%, transparent);
-}
-
-/* ==========================================================================
-   Dark Mode Toggle
+   Theme mode toggler
    ========================================================================== */
 
 .dark-mode-toggle {
@@ -580,6 +268,10 @@ input[type="radio"]:focus-visible {
   }
 }
 
+/* ==========================================================================
+   Pill Navigation Styles
+   ========================================================================== */
+
 @media screen and (min-width: 600px) {
   .wp-block-navigation.is-style-pill .wp-block-navigation-item__content {
     text-decoration: none;
@@ -591,7 +283,7 @@ input[type="radio"]:focus-visible {
   }
 
   .wp-block-navigation.is-style-pill .wp-block-navigation-item__content {
-    padding: var(--wp--preset--spacing--2) var(--wp--preset--spacing--4);
+    padding: var(--wp--preset--spacing--2) var(--wp--preset--spacing--3);
   }
 
   .wp-block-navigation.is-style-pill
@@ -704,4 +396,408 @@ input[type="radio"]:focus-visible {
     .wp-block-navigation__submenu-container {
     gap: var(--wp--preset--spacing--5);
   }
+}
+
+/* ==========================================================================
+   Inputs
+   ========================================================================== */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+textarea,
+.wp-block-search__input,
+.wc-block-components-textarea,
+.wc-block-components-form .wc-block-components-text-input input[type="text"],
+.wc-block-components-form .wc-block-components-text-input input[type="email"],
+.wc-block-components-form .wc-block-components-text-input input[type="number"],
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="password"],
+.wc-block-components-form .wc-block-components-text-input input[type="search"],
+.wc-block-components-form .wc-block-components-text-input input[type="url"],
+.wc-block-components-form .wc-block-components-text-input input[type="tel"],
+.wc-block-components-form .wc-block-components-text-input textarea,
+.wc-block-components-text-input input[type="text"],
+.wc-block-components-text-input input[type="email"],
+.wc-block-components-text-input input[type="number"],
+.wc-block-components-text-input input[type="password"],
+.wc-block-components-text-input input[type="search"],
+.wc-block-components-text-input input[type="url"],
+.wc-block-components-text-input input[type="tel"],
+.wc-block-components-text-input textarea,
+select,
+.wc-blocks-components-select .wc-blocks-components-select__select {
+  background-color: transparent;
+  color: var(--foreground) !important;
+  border-width: 1px !important;
+  border-style: solid;
+  border-color: var(--border);
+  border-radius: calc(var(--radius) - 2px) !important;
+  padding: 0.25rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25/0.875 !important;
+  height: calc(0.25rem * 9);
+  box-shadow: 0 0.0625rem 0.125rem 0 rgb(0 0 0 / 0.05);
+  transition-property: border-color;
+  transition-timing-function: var(--default-transition-timing-function);
+  transition-duration: var(--default-transition-duration);
+}
+
+textarea,
+.wc-block-components-textarea,
+.wc-block-components-form .wc-block-components-text-input textarea {
+  height: auto;
+}
+
+.wp-block-search__input:focus-visible,
+.wp-block-search__input:focus,
+input[type="text"]:focus-visible,
+input[type="text"]:focus,
+input[type="email"]:focus-visible,
+input[type="email"]:focus,
+input[type="password"]:focus-visible,
+input[type="password"]:focus,
+input[type="search"]:focus-visible,
+input[type="search"]:focus,
+input[type="url"]:focus-visible,
+input[type="url"]:focus,
+input[type="tel"]:focus-visible,
+input[type="tel"]:focus,
+input[type="number"]:focus-visible,
+input[type="number"]:focus,
+textarea:focus-visible,
+textarea:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="text"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="text"]:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="email"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="email"]:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="password"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="password"]:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="search"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="search"]:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="url"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="url"]:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="tel"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="tel"]:focus,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="number"]:focus-visible,
+.wc-block-components-form
+  .wc-block-components-text-input
+  input[type="number"]:focus,
+.wc-block-components-text-input input[type="text"]:focus-visible,
+.wc-block-components-text-input input[type="text"]:focus,
+.wc-block-components-text-input input[type="email"]:focus-visible,
+.wc-block-components-text-input input[type="email"]:focus,
+.wc-block-components-text-input input[type="number"]:focus-visible,
+.wc-block-components-text-input input[type="number"]:focus,
+.wc-block-components-text-input input[type="password"]:focus-visible,
+.wc-block-components-text-input input[type="password"]:focus,
+.wc-block-components-text-input input[type="search"]:focus-visible,
+.wc-block-components-text-input input[type="search"]:focus,
+.wc-block-components-text-input input[type="tel"]:focus-visible,
+.wc-block-components-text-input input[type="tel"]:focus,
+.wc-block-components-text-input input[type="url"]:focus-visible,
+.wc-block-components-text-input input[type="url"]:focus,
+.wc-block-components-textarea:focus-visible,
+.wc-block-components-textarea:focus,
+select:focus-visible,
+select:focus,
+.wc-blocks-components-select .wc-blocks-components-select__select:focus-visible,
+.wc-blocks-components-select .wc-blocks-components-select__select:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, oklch(70.8% 0 0) 50%, transparent);
+}
+
+select,
+.wc-blocks-components-select .wc-blocks-components-select__select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='oklch(80.6% 0 0)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 0.75rem auto;
+  appearance: none;
+}
+
+/**
+ * Select Options Styling (for browsers that support it)
+ * Note: Limited styling support across browsers
+ */
+select option {
+  background-color: var(--background);
+  color: var(--foreground);
+  padding: 0.5rem;
+}
+
+select option:checked {
+  background: linear-gradient(var(--primary), var(--primary));
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+input[type="checkbox"],
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"],
+input[type="radio"],
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"] {
+  display: inline-flex;
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  cursor: inherit;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  background-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border);
+  border-radius: 4px;
+  color: var(--primary-foreground);
+  box-shadow: none;
+}
+
+input[type="checkbox"]:checked,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"]:checked,
+input[type="radio"]:checked,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:checked {
+  background-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::after,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"]:checked::after,
+input[type="radio"]:checked::after,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1.5px;
+  width: 3.5px;
+  height: 8px;
+  border: solid currentColor;
+  border-width: 0 1px 1px 0;
+  -webkit-transform: rotate(45deg) translate(-50%, -50%);
+  -ms-transform: rotate(45deg) translate(-50%, -50%);
+  transform: rotate(45deg);
+}
+
+input[type="checkbox"]:focus-visible,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible,
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:focus-visible {
+  outline: none;
+}
+
+/* ==========================================================================
+   Dark Mode Inputs
+   ========================================================================== */
+
+.dark .wp-block-search__input,
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="search"],
+.dark input[type="url"],
+.dark input[type="tel"],
+.dark textarea,
+.dark .wc-block-components-textarea,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="text"],
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="email"],
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="password"],
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="number"],
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="search"],
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="tel"],
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="url"],
+.dark .wc-block-components-text-input input[type="text"],
+.dark .wc-block-components-text-input input[type="email"],
+.dark .wc-block-components-text-input input[type="number"],
+.dark .wc-block-components-text-input input[type="password"],
+.dark .wc-block-components-text-input input[type="search"],
+.dark .wc-block-components-text-input input[type="tel"],
+.dark .wc-block-components-text-input input[type="url"],
+.dark .wc-block-components-textarea,
+.dark select,
+.dark .wc-blocks-components-select .wc-blocks-components-select__select,
+.dark input[type="checkbox"],
+.dark
+  .wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"],
+input[type="radio"],
+.wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"] {
+  background-color: color-mix(in oklab, var(--input) 30%, transparent);
+}
+
+.dark .wp-block-search__input:focus-visible,
+.dark .wp-block-search__input:focus,
+.dark input[type="text"]:focus-visible,
+.dark input[type="text"]:focus,
+.dark input[type="email"]:focus-visible,
+.dark input[type="email"]:focus,
+.dark input[type="password"]:focus-visible,
+.dark input[type="password"]:focus,
+.dark input[type="search"]:focus-visible,
+.dark input[type="search"]:focus,
+.dark input[type="tel"]:focus-visible,
+.dark input[type="tel"]:focus,
+.dark input[type="url"]:focus-visible,
+.dark input[type="url"]:focus,
+.dark input[type="number"]:focus-visible,
+.dark input[type="number"]:focus,
+.dark textarea:focus-visible,
+.dark textarea:focus,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="text"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="text"]:focus,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="email"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="email"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="number"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="number"]:focus,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="password"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="password"]:focus,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="search"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="search"]:focus,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="tel"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="tel"]:focus,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="url"]:focus-visible,
+.dark
+  .wc-block-components-form
+  .wc-block-components-text-input
+  input[type="url"]:focus,
+.dark .wc-block-components-textarea:focus-visible,
+.dark .wc-block-components-textarea:focus,
+.dark .wc-block-components-text-input input[type="text"]:focus-visible,
+.dark .wc-block-components-text-input input[type="text"]:focus,
+.dark .wc-block-components-text-input input[type="email"]:focus-visible,
+.dark .wc-block-components-text-input input[type="email"]:focus,
+.dark .wc-block-components-text-input input[type="number"]:focus-visible,
+.dark .wc-block-components-text-input input[type="number"]:focus,
+.dark .wc-block-components-text-input input[type="password"]:focus-visible,
+.dark .wc-block-components-text-input input[type="password"]:focus,
+.dark .wc-block-components-text-input input[type="search"]:focus-visible,
+.dark .wc-block-components-text-input input[type="search"]:focus,
+.dark .wc-block-components-text-input input[type="tel"]:focus-visible,
+.dark .wc-block-components-text-input input[type="tel"]:focus,
+.dark .wc-block-components-text-input input[type="url"]:focus-visible,
+.dark .wc-block-components-text-input input[type="url"]:focus,
+.dark select:focus-visible,
+.dark select:focus,
+.dark
+  .wc-blocks-components-select
+  .wc-blocks-components-select__select:focus-visible,
+.dark .wc-blocks-components-select .wc-blocks-components-select__select:focus {
+  border-width: 1px !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, oklch(55.6% 0 0) 50%, transparent);
+}
+
+.dark select,
+.dark .wc-blocks-components-select .wc-blocks-components-select__select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='oklch(100% 0 0/.15)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.dark input[type="checkbox"]:checked,
+.dark
+  .wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="checkbox"]:checked,
+.dark input[type="radio"]:checked,
+.dark
+  .wc-block-components-checkbox
+  .wc-block-components-checkbox__input[type="radio"]:checked {
+  background-color: var(--primary);
 }

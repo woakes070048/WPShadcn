@@ -70,40 +70,53 @@
 
 /* Editor wrapper */
 .editor-styles-wrapper {
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans,
+    Ubuntu, Cantarell, Helvetica Neue, sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.625;
 }
 
 /* Button variants */
-.editor-styles-wrapper .wp-block-button.is-style-outline .wp-block-button__link {
+.editor-styles-wrapper
+  .wp-block-button.is-style-outline
+  .wp-block-button__link {
   background-color: transparent;
   color: var(--primary);
   border: 1px solid var(--border);
 }
 
-.editor-styles-wrapper .wp-block-button.is-style-outline .wp-block-button__link:hover {
+.editor-styles-wrapper
+  .wp-block-button.is-style-outline
+  .wp-block-button__link:hover {
   background-color: var(--accent);
   color: var(--accent-foreground);
 }
 
-.editor-styles-wrapper .wp-block-button.is-style-secondary .wp-block-button__link {
+.editor-styles-wrapper
+  .wp-block-button.is-style-secondary
+  .wp-block-button__link {
   background-color: var(--secondary);
   color: var(--secondary-foreground);
 }
 
-.editor-styles-wrapper .wp-block-button.is-style-secondary .wp-block-button__link:hover {
-  background-color: color-mix(in oklab,var(--secondary)80%,transparent);
+.editor-styles-wrapper
+  .wp-block-button.is-style-secondary
+  .wp-block-button__link:hover {
+  background-color: color-mix(in oklab, var(--secondary) 80%, transparent);
 }
 
-.editor-styles-wrapper .wp-block-button.is-style-destructive .wp-block-button__link {
+.editor-styles-wrapper
+  .wp-block-button.is-style-destructive
+  .wp-block-button__link {
   background-color: var(--destructive);
   color: var(--destructive-foreground);
 }
 
-.editor-styles-wrapper .wp-block-button.is-style-destructive .wp-block-button__link:hover {
-  background-color: color-mix(in oklab,var(--destructive)90%,transparent);
+.editor-styles-wrapper
+  .wp-block-button.is-style-destructive
+  .wp-block-button__link:hover {
+  background-color: color-mix(in oklab, var(--destructive) 90%, transparent);
 }
 
 .editor-styles-wrapper .wp-block-button.is-style-ghost .wp-block-button__link {
@@ -111,7 +124,22 @@
   color: var(--primary);
 }
 
-.editor-styles-wrapper .wp-block-button.is-style-ghost .wp-block-button__link:hover {
+.editor-styles-wrapper
+  .wp-block-button.is-style-ghost
+  .wp-block-button__link:hover {
   background-color: var(--accent);
   color: var(--accent-foreground);
+}
+
+.block-editor-block-list__block[data-type="core/navigation"].is-style-pill
+  .wp-block-navigation__container
+  .wp-block-navigation-item {
+  padding: var(--wp--preset--spacing--2) var(--wp--preset--spacing--3);
+}
+
+.block-editor-block-list__block[data-type="core/navigation"].is-style-pill
+  .wp-block-navigation__submenu-container {
+  background-color: var(--background);
+  border-radius: calc(var(--radius) - 2px);
+  overflow: hidden !important;
 }

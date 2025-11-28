@@ -18,3 +18,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/inc/Core.php';
 require_once __DIR__ . '/inc/DarkMode.php';
 require_once __DIR__ . '/inc/Integrations.php';
+
+// Admin Tools
+if ( is_admin() ) {
+	require_once __DIR__ . '/inc/Admin/JSXConverter.php';
+}

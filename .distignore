@@ -17,3 +17,12 @@ run.sh
 
 /vendor/bin
 /vendor/squizlabs
+
+# JSX to Gutenberg Converter (Development Tool)
+inc/Admin/JSXConverter.php
+assets/css/jsx-converter-admin.css
+assets/js/jsx-converter-admin.js
+
+# Converter Documentation
+context
+context/

@@ -19,7 +19,10 @@ require_once __DIR__ . '/inc/Core.php';
 require_once __DIR__ . '/inc/DarkMode.php';
 require_once __DIR__ . '/inc/Integrations.php';
 
-// Admin Tools
+// Development Tools (only load in development environment)
 if ( is_admin() ) {
-	require_once __DIR__ . '/inc/Admin/JSXConverter.php';
+	// JSX to Gutenberg Converter (development tool)
+	if ( file_exists( __DIR__ . '/inc/Admin/JSXConverter.php' ) ) {
+		require_once __DIR__ . '/inc/Admin/JSXConverter.php';
+	}
 }

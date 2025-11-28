@@ -280,6 +280,20 @@ class JSXConverter {
 		if ( preg_match( '/<Button([^>]*)>(.*?)<\/Button>/s', $component, $matches ) ) {
 			$attributes = $matches[1];
 			$content = $matches[2];
+			
+			// Extract variant attribute
+			$variant = '';
+			if ( preg_match( '/variant=["\']([^"\']+)["\']/', $attributes, $variant_match ) ) {
+				$variant = $variant_match[1];
+				// Remove variant from attributes (it's not a valid HTML attribute)
+				$attributes = preg_replace( '/\s*variant=["\'][^"\']*["\']/', '', $attributes );
+			}
+			
+			// Add variant as data attribute for later processing
+			if ( ! empty( $variant ) ) {
+				$attributes .= ' data-variant="' . $variant . '"';
+			}
+			
 			// Remove any remaining component tags inside
 			$content = preg_replace( '/<[A-Z][a-zA-Z]*\s*\/>/', '', $content );
 			return '<button' . $attributes . '>' . trim( $content ) . '</button>';
@@ -288,6 +302,35 @@ class JSXConverter {
 		// Handle Tagline component
 		if ( preg_match( '/<Tagline([^>]*)>(.*?)<\/Tagline>/s', $component, $matches ) ) {
 			return '<p' . $matches[1] . ' data-tagline="true">' . $matches[2] . '</p>';
+		}
+
+		// Handle Image component (Next.js style)
+		if ( preg_match( '/<Image([^>]*)(\/?)>/s', $component, $matches ) ) {
+			$attributes = $matches[1];
+			$is_self_closing = ! empty( $matches[2] );
+			
+			// Extract src and alt from attributes
+			$src = '';
+			$alt = '';
+			$className = '';
+			
+			if ( preg_match( '/src=["\']([^"\']+)["\']/', $attributes, $src_match ) ) {
+				$src = $src_match[1];
+			}
+			if ( preg_match( '/alt=["\']([^"\']+)["\']/', $attributes, $alt_match ) ) {
+				$alt = $alt_match[1];
+			}
+			if ( preg_match( '/class=["\']([^"\']+)["\']/', $attributes, $class_match ) ) {
+				$className = ' class="' . $class_match[1] . '"';
+			}
+			
+			return '<img src="' . $src . '" alt="' . $alt . '"' . $className . '/>';
+		}
+
+		// Handle AspectRatio component - extract inner content
+		if ( preg_match( '/<AspectRatio([^>]*)>(.*?)<\/AspectRatio>/s', $component, $matches ) ) {
+			// Return just the inner content (usually an Image)
+			return $matches[2];
 		}
 
 		return $component;
@@ -331,13 +374,20 @@ class JSXConverter {
 		if ( $tag === 'section' ) {
 			$output .= $this->create_group_block( $element, $depth );
 		} elseif ( $tag === 'div' ) {
-			$output .= $this->create_group_block( $element, $depth );
+			// Check if this div contains multiple buttons (button container)
+			if ( $this->is_buttons_container( $element ) ) {
+				$output .= $this->create_buttons_group_block( $element, $depth );
+			} else {
+				$output .= $this->create_group_block( $element, $depth );
+			}
 		} elseif ( in_array( $tag, [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ) ) {
 			$output .= $this->create_heading_block( $element, $depth );
 		} elseif ( $tag === 'p' ) {
 			$output .= $this->create_paragraph_block( $element, $depth );
 		} elseif ( $tag === 'button' ) {
 			$output .= $this->create_button_block( $element, $depth );
+		} elseif ( $tag === 'img' ) {
+			$output .= $this->create_image_block( $element, $depth );
 		} else {
 			// Fallback: process children
 			foreach ( $element->childNodes as $child ) {
@@ -348,6 +398,26 @@ class JSXConverter {
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Check if element is a container for multiple buttons
+	 */
+	private function is_buttons_container( $element ) {
+		$button_count = 0;
+		
+		// Count direct button children
+		foreach ( $element->childNodes as $child ) {
+			if ( $child->nodeType === XML_ELEMENT_NODE ) {
+				$child_tag = strtolower( $child->tagName );
+				if ( $child_tag === 'button' ) {
+					$button_count++;
+				}
+			}
+		}
+		
+		// If has 2 or more buttons, it's a buttons container
+		return $button_count >= 2;
 	}
 
 	/**
@@ -660,12 +730,15 @@ class JSXConverter {
 	}
 
 	/**
-	 * Create a button block
+	 * Create a button block (single button with wrapper)
 	 */
 	private function create_button_block( $element, $depth = 0 ) {
 		$indent = str_repeat( "\t", $depth );
 		$classes = $element->getAttribute( 'class' );
 		$content = $this->get_element_text_content( $element );
+		
+		// Get variant from data attribute
+		$variant = $element->hasAttribute( 'data-variant' ) ? $element->getAttribute( 'data-variant' ) : '';
 
 		$block_attrs = $this->parse_classes_to_attributes( $classes );
 
@@ -675,6 +748,12 @@ class JSXConverter {
 
 		// Build button attributes
 		$attrs = array();
+		
+		// Add variant as className for block styles
+		if ( ! empty( $variant ) && $this->is_valid_button_variant( $variant ) ) {
+			$attrs[] = '"className":"is-style-' . esc_attr( $variant ) . '"';
+		}
+		
 		if ( ! empty( $block_attrs['backgroundColor'] ) ) {
 			$attrs[] = '"backgroundColor":"' . esc_attr( $block_attrs['backgroundColor'] ) . '"';
 		}
@@ -684,6 +763,12 @@ class JSXConverter {
 
 		$attrs_string = ! empty( $attrs ) ? ' {' . implode( ',', $attrs ) . '}' : '';
 
+		// Build CSS classes for button div
+		$button_div_classes = array( 'wp-block-button' );
+		if ( ! empty( $variant ) && $this->is_valid_button_variant( $variant ) ) {
+			$button_div_classes[] = 'is-style-' . esc_attr( $variant );
+		}
+		
 		// Build CSS classes for button link
 		$link_classes = array( 'wp-block-button__link' );
 		
@@ -701,7 +786,7 @@ class JSXConverter {
 		$link_classes[] = 'wp-element-button';
 
 		$output .= $indent . "\t" . '<!-- wp:button' . $attrs_string . ' -->' . "\n";
-		$output .= $indent . "\t" . '<div class="wp-block-button">';
+		$output .= $indent . "\t" . '<div class="' . implode( ' ', $button_div_classes ) . '">';
 		$output .= '<a class="' . implode( ' ', $link_classes ) . '">';
 		$output .= esc_html( $content );
 		$output .= '</a></div>' . "\n";
@@ -710,6 +795,136 @@ class JSXConverter {
 		$output .= $indent . '</div>' . "\n";
 		$output .= $indent . '<!-- /wp:buttons -->' . "\n\n";
 
+		return $output;
+	}
+
+	/**
+	 * Create a buttons group block (for multiple buttons in a container)
+	 */
+	private function create_buttons_group_block( $element, $depth = 0 ) {
+		$indent = str_repeat( "\t", $depth );
+		$classes = $element->getAttribute( 'class' );
+		
+		// Parse classes to determine layout
+		$block_attrs = $this->parse_classes_to_attributes( $classes );
+		
+		// Determine justification from flex classes
+		$justify = 'left';
+		if ( strpos( $classes, 'justify-center' ) !== false || strpos( $classes, 'items-center' ) !== false ) {
+			$justify = 'center';
+		} elseif ( strpos( $classes, 'justify-end' ) !== false ) {
+			$justify = 'right';
+		}
+		
+		// Start buttons block
+		$output = $indent . '<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"' . $justify . '"}} -->' . "\n";
+		$output .= $indent . '<div class="wp-block-buttons">' . "\n";
+		
+		// Process each button child
+		foreach ( $element->childNodes as $child ) {
+			if ( $child->nodeType === XML_ELEMENT_NODE ) {
+				$child_tag = strtolower( $child->tagName );
+				
+				if ( $child_tag === 'button' ) {
+					$button_classes = $child->getAttribute( 'class' );
+					$button_content = $this->get_element_text_content( $child );
+					$button_attrs = $this->parse_classes_to_attributes( $button_classes );
+					
+					// Get variant from data attribute
+					$button_variant = $child->hasAttribute( 'data-variant' ) ? $child->getAttribute( 'data-variant' ) : '';
+					
+					// Build button attributes
+					$attrs = array();
+					
+					// Add variant as className for block styles
+					if ( ! empty( $button_variant ) && $this->is_valid_button_variant( $button_variant ) ) {
+						$attrs[] = '"className":"is-style-' . esc_attr( $button_variant ) . '"';
+					}
+					
+					if ( ! empty( $button_attrs['backgroundColor'] ) ) {
+						$attrs[] = '"backgroundColor":"' . esc_attr( $button_attrs['backgroundColor'] ) . '"';
+					}
+					if ( ! empty( $button_attrs['textColor'] ) ) {
+						$attrs[] = '"textColor":"' . esc_attr( $button_attrs['textColor'] ) . '"';
+					}
+					
+					$attrs_string = ! empty( $attrs ) ? ' {' . implode( ',', $attrs ) . '}' : '';
+					
+					// Build CSS classes for button div
+					$button_div_classes = array( 'wp-block-button' );
+					if ( ! empty( $button_variant ) && $this->is_valid_button_variant( $button_variant ) ) {
+						$button_div_classes[] = 'is-style-' . esc_attr( $button_variant );
+					}
+					
+					// Build CSS classes for button link
+					$link_classes = array( 'wp-block-button__link' );
+					
+					if ( ! empty( $button_attrs['backgroundColor'] ) ) {
+						$link_classes[] = 'has-' . $button_attrs['backgroundColor'] . '-background-color';
+						$link_classes[] = 'has-background';
+					}
+					
+					if ( ! empty( $button_attrs['textColor'] ) ) {
+						$link_classes[] = 'has-' . $button_attrs['textColor'] . '-color';
+						$link_classes[] = 'has-text-color';
+					}
+					
+					$link_classes[] = 'wp-element-button';
+					
+					// Output button
+					$output .= $indent . "\t" . '<!-- wp:button' . $attrs_string . ' -->' . "\n";
+					$output .= $indent . "\t" . '<div class="' . implode( ' ', $button_div_classes ) . '">';
+					$output .= '<a class="' . implode( ' ', $link_classes ) . '">';
+					$output .= esc_html( $button_content );
+					$output .= '</a></div>' . "\n";
+					$output .= $indent . "\t" . '<!-- /wp:button -->' . "\n\n";
+				}
+			}
+		}
+		
+		$output .= $indent . '</div>' . "\n";
+		$output .= $indent . '<!-- /wp:buttons -->' . "\n\n";
+		
+		return $output;
+	}
+
+	/**
+	 * Create an image block
+	 */
+	private function create_image_block( $element, $depth = 0 ) {
+		$indent = str_repeat( "\t", $depth );
+		$classes = $element->getAttribute( 'class' );
+		
+		// Get image attributes
+		$src = $element->hasAttribute( 'src' ) ? $element->getAttribute( 'src' ) : '';
+		$alt = $element->hasAttribute( 'alt' ) ? $element->getAttribute( 'alt' ) : '';
+		
+		$block_attrs = $this->parse_classes_to_attributes( $classes );
+		
+		// Build block attributes
+		$attrs = array();
+		$attrs[] = '"sizeSlug":"large"';
+		
+		if ( ! empty( $block_attrs['className'] ) ) {
+			$attrs[] = '"className":"' . esc_attr( $block_attrs['className'] ) . '"';
+		}
+		
+		$attrs_string = '{' . implode( ',', $attrs ) . '}';
+		
+		// Build CSS classes for image
+		$html_classes = array();
+		if ( ! empty( $block_attrs['className'] ) ) {
+			$html_classes[] = esc_attr( $block_attrs['className'] );
+		}
+		
+		$class_string = ! empty( $html_classes ) ? ' class="' . implode( ' ', $html_classes ) . '"' : '';
+		
+		$output = $indent . '<!-- wp:image ' . $attrs_string . ' -->' . "\n";
+		$output .= $indent . '<figure class="wp-block-image size-large">';
+		$output .= '<img' . $class_string . ' src="' . esc_attr( $src ) . '" alt="' . esc_attr( $alt ) . '"/>';
+		$output .= '</figure>' . "\n";
+		$output .= $indent . '<!-- /wp:image -->' . "\n\n";
+		
 		return $output;
 	}
 
@@ -977,6 +1192,20 @@ class JSXConverter {
 		$content = trim( $content );
 		
 		return $content;
+	}
+
+	/**
+	 * Check if button variant is valid (has corresponding block style)
+	 */
+	private function is_valid_button_variant( $variant ) {
+		$valid_variants = array(
+			'ghost',        // transparent background
+			'outline',      // border with transparent background
+			'secondary',    // secondary color
+			'destructive',  // destructive/error color
+		);
+		
+		return in_array( $variant, $valid_variants, true );
 	}
 }
 

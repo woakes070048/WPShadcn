@@ -10,3 +10,11 @@ log.xml
 
 /vendor
 tools/vendor
+
+.claude/
+docs/
+plans/
+.opencode/
+CLAUDE.md
+repomix-output.xml
+.repomixignore

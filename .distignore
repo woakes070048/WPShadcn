@@ -27,3 +27,11 @@ assets/js/jsx-converter-admin.js
 # Converter Documentation
 context
 context/
+
+.claude/
+docs/
+plans/
+.opencode/
+CLAUDE.md
+repomix-output.xml
+.repomixignore

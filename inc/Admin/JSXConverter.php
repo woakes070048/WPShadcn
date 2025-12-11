@@ -244,7 +244,75 @@ class JSXConverter {
 	private function normalize_jsx_attributes( $jsx ) {
 		// Remove JSX comments first
 		$jsx = preg_replace( '/\{\/\*.*?\*\/\}/s', '', $jsx );
-		
+
+		// Remove import statements
+		$jsx = preg_replace( '/^import\s+.*?;\s*$/m', '', $jsx );
+
+		// Remove interface/type declarations
+		$jsx = preg_replace( '/^interface\s+\w+\s*\{[\s\S]*?\}\s*$/m', '', $jsx );
+
+		// Extract default values from component props before processing
+		$defaults = $this->extract_default_values( $jsx );
+
+		// Remove const component declarations - extract just the JSX return
+		if ( preg_match( '/return\s*\(\s*(<[\s\S]*>)\s*\)\s*;?\s*\}\s*;?/s', $jsx, $matches ) ) {
+			$jsx = $matches[1];
+		}
+
+		// Replace JSX variables with extracted default values
+		$jsx = $this->replace_jsx_variables( $jsx, $defaults );
+
+		// Convert star ratings to text (★★★★★)
+		// Match patterns like: {[...Array(5)].map(...<Star.../>...)}
+		$jsx = preg_replace_callback(
+			'/\{\s*\[\s*\.\.\.\s*Array\s*\(\s*(\d+)\s*\)\s*\]\s*\.map\s*\([^)]*\)\s*\}/s',
+			function ( $matches ) {
+				$count = intval( $matches[1] );
+				return str_repeat( '★', $count );
+			},
+			$jsx
+		);
+
+		// Also handle simpler star patterns
+		$jsx = preg_replace( '/<Star[^>]*\/>/s', '★', $jsx );
+
+		// Convert rating display patterns like {reviews.rating?.toFixed(1)}
+		$jsx = preg_replace( '/\{\s*reviews\.rating\?\s*\.toFixed\s*\(\s*1\s*\)\s*\}/', '5.0', $jsx );
+		$jsx = preg_replace( '/\{\s*reviews\.count\s*\}/', '200', $jsx );
+
+		// Expand avatar array maps - convert {reviews.avatars.map(...)} to multiple Avatar components
+		// This pattern handles: {reviews.avatars.map((avatar, index) => (<Avatar...><AvatarImage .../></Avatar>))}
+		$jsx = preg_replace_callback(
+			'/\{\s*reviews\.avatars\.map\s*\(\s*\([^)]+\)\s*=>\s*\(\s*(<Avatar[^>]*>[\s\S]*?<\/Avatar>)\s*\)\s*\)\s*\}/s',
+			function ( $matches ) {
+				$avatar_template = $matches[1];
+				// Default avatars (can be customized)
+				$avatars = array(
+					array( 'src' => 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-1.webp', 'alt' => 'Avatar 1' ),
+					array( 'src' => 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-2.webp', 'alt' => 'Avatar 2' ),
+					array( 'src' => 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-3.webp', 'alt' => 'Avatar 3' ),
+					array( 'src' => 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-4.webp', 'alt' => 'Avatar 4' ),
+					array( 'src' => 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-5.webp', 'alt' => 'Avatar 5' ),
+				);
+
+				$result = '';
+				foreach ( $avatars as $avatar ) {
+					$expanded = $avatar_template;
+					// Replace {avatar.src} or avatar.src patterns
+					$expanded = preg_replace( '/\{\s*avatar\.src\s*\}/', $avatar['src'], $expanded );
+					$expanded = preg_replace( '/src=\{\s*avatar\.src\s*\}/', 'src="' . $avatar['src'] . '"', $expanded );
+					// Replace {avatar.alt} or avatar.alt patterns
+					$expanded = preg_replace( '/\{\s*avatar\.alt\s*\}/', $avatar['alt'], $expanded );
+					$expanded = preg_replace( '/alt=\{\s*avatar\.alt\s*\}/', 'alt="' . $avatar['alt'] . '"', $expanded );
+					// Remove key attribute
+					$expanded = preg_replace( '/\s*key=\{\s*index\s*\}/', '', $expanded );
+					$result .= $expanded;
+				}
+				return $result;
+			},
+			$jsx
+		);
+
 		// Normalize whitespace in opening tags (collapse multiline to single line)
 		$jsx = preg_replace_callback( '/<(\w+)([^>]*?)>/s', function( $matches ) {
 			$tag = $matches[1];
@@ -253,7 +321,7 @@ class JSXConverter {
 			$attrs = preg_replace( '/\s+/', ' ', $attrs );
 			return '<' . $tag . $attrs . '>';
 		}, $jsx );
-		
+
 		// Convert className to class
 		$jsx = preg_replace( '/\bclassName\s*=/', 'class=', $jsx );
 
@@ -261,13 +329,219 @@ class JSXConverter {
 		$jsx = preg_replace( '/\baria-labelledby\s*=/', 'arialabelledby=', $jsx );
 		$jsx = preg_replace( '/\baria-label\s*=/', 'arialabel=', $jsx );
 
-		// Remove self-closing component tags like <ArrowRight />
+		// Remove self-closing component tags like <ArrowRight />, <ArrowDownRight />, etc.
 		$jsx = preg_replace( '/<([A-Z][a-zA-Z]*)\s*\/>/', '', $jsx );
 
 		// Remove component imports and declarations
 		$jsx = preg_replace_callback( '/<([A-Z][a-zA-Z]*)[^>]*>.*?<\/\1>/s', function( $matches ) {
 			return $this->convert_component_to_html( $matches[0] );
 		}, $jsx );
+
+		// Clean up any remaining unresolved JSX expressions
+		$jsx = preg_replace( '/\{\s*`[^`]*`\s*\}/', '', $jsx );
+
+		return $jsx;
+	}
+
+	/**
+	 * Extract default values from component props
+	 */
+	private function extract_default_values( $jsx ) {
+		$defaults = array();
+
+		// Match the destructuring assignment pattern with defaults
+		// e.g., heading = "Default heading text"
+		if ( preg_match_all( '/(\w+)\s*=\s*"([^"]+)"/', $jsx, $matches, PREG_SET_ORDER ) ) {
+			foreach ( $matches as $match ) {
+				$defaults[ $match[1] ] = $match[2];
+			}
+		}
+
+		// Extract buttons object - handle multiline nested objects
+		// Match from "buttons = {" to the closing "}" at same nesting level
+
+		if ( preg_match( '/button\s*=\s*\{/s', $jsx, $start_match, PREG_OFFSET_CAPTURE ) ) {
+			$start_pos = $start_match[0][1] + strlen( $start_match[0][0] );
+			$button_content = $this->extract_balanced_braces( $jsx, $start_pos );
+
+			// Extract primary button values
+			if ( preg_match( '/text\s*:\s*"([^"]+)"/', $button_content, $text_match ) ) {
+				$defaults['button.text'] = $text_match[1];
+			}
+
+			if ( preg_match( '/url\s*:\s*"([^"]+)"/', $button_content, $url_match ) ) {
+				$defaults['button.url'] = $url_match[1];
+			}
+		}
+
+		if ( preg_match( '/buttons\s*=\s*\{/s', $jsx, $start_match, PREG_OFFSET_CAPTURE ) ) {
+			$start_pos = $start_match[0][1] + strlen( $start_match[0][0] );
+			$buttons_content = $this->extract_balanced_braces( $jsx, $start_pos );
+
+			// Extract primary button values
+			if ( preg_match( '/primary\s*:\s*\{([^}]+)\}/s', $buttons_content, $primary_match ) ) {
+				$primary_content = $primary_match[1];
+				if ( preg_match( '/text\s*:\s*"([^"]+)"/', $primary_content, $text_match ) ) {
+					$defaults['buttons.primary.text'] = $text_match[1];
+				}
+				if ( preg_match( '/url\s*:\s*"([^"]+)"/', $primary_content, $url_match ) ) {
+					$defaults['buttons.primary.url'] = $url_match[1];
+				}
+			}
+
+			// Extract secondary button values
+			if ( preg_match( '/secondary\s*:\s*\{([^}]+)\}/s', $buttons_content, $secondary_match ) ) {
+				$secondary_content = $secondary_match[1];
+				if ( preg_match( '/text\s*:\s*"([^"]+)"/', $secondary_content, $text_match ) ) {
+					$defaults['buttons.secondary.text'] = $text_match[1];
+				}
+				if ( preg_match( '/url\s*:\s*"([^"]+)"/', $secondary_content, $url_match ) ) {
+					$defaults['buttons.secondary.url'] = $url_match[1];
+				}
+			}
+		}
+
+		// Extract image object
+		if ( preg_match( '/image\s*=\s*\{/s', $jsx, $start_match, PREG_OFFSET_CAPTURE ) ) {
+			$start_pos = $start_match[0][1] + strlen( $start_match[0][0] );
+			$image_content = $this->extract_balanced_braces( $jsx, $start_pos );
+
+			if ( preg_match( '/src\s*:\s*"([^"]+)"/', $image_content, $src_match ) ) {
+				$defaults['image.src'] = $src_match[1];
+			}
+			if ( preg_match( '/alt\s*:\s*"([^"]+)"/', $image_content, $alt_match ) ) {
+				$defaults['image.alt'] = $alt_match[1];
+			}
+		}
+
+		// Match reviews defaults
+		if ( preg_match( '/reviews\s*=\s*\{/s', $jsx, $start_match, PREG_OFFSET_CAPTURE ) ) {
+			$start_pos = $start_match[0][1] + strlen( $start_match[0][0] );
+			$reviews_content = $this->extract_balanced_braces( $jsx, $start_pos );
+
+			if ( preg_match( '/count\s*:\s*(\d+)/', $reviews_content, $count_match ) ) {
+				$defaults['reviews.count'] = $count_match[1];
+			}
+			if ( preg_match( '/rating\s*:\s*([\d.]+)/', $reviews_content, $rating_match ) ) {
+				$defaults['reviews.rating'] = $rating_match[1];
+			}
+		}
+
+		return $defaults;
+	}
+
+	/**
+	 * Extract content within balanced braces starting at position
+	 */
+	private function extract_balanced_braces( $str, $start_pos ) {
+		$depth = 1;
+		$content = '';
+		$len = strlen( $str );
+
+		for ( $i = $start_pos; $i < $len && $depth > 0; $i++ ) {
+			$char = $str[ $i ];
+			if ( $char === '{' ) {
+				$depth++;
+			} elseif ( $char === '}' ) {
+				$depth--;
+				if ( $depth === 0 ) {
+					break;
+				}
+			}
+			$content .= $char;
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Replace JSX variables with their default values
+	 */
+	private function replace_jsx_variables( $jsx, $defaults ) {
+		// Replace simple variables like {heading}, {description}, {badge}
+		foreach ( $defaults as $key => $value ) {
+			// // Skip nested keys (contain dots) - handled separately
+			// if ( strpos( $key, '.' ) !== false ) {
+			// 	continue;
+			// }
+			// Handle simple variables: {heading}
+			$jsx = preg_replace( '/\{\s*' . preg_quote( $key, '/' ) . '\s*\}/', $value, $jsx );
+		}
+		return $jsx;
+
+		// Replace nested button text patterns like {buttons.primary.text}
+		$jsx = preg_replace_callback(
+			'/\{\s*buttons\.(\w+)\.(\w+)\s*\}/',
+			function ( $matches ) use ( $defaults ) {
+				$key = 'buttons.' . $matches[1] . '.' . $matches[2];
+				return isset( $defaults[ $key ] ) ? $defaults[ $key ] : '';
+			},
+			$jsx
+		);
+
+		// Replace button URL in href: href={buttons.primary.url}
+		$jsx = preg_replace_callback(
+			'/href=\{\s*buttons\.(\w+)\.url\s*\}/',
+			function ( $matches ) use ( $defaults ) {
+				$key = 'buttons.' . $matches[1] . '.url';
+				$url = isset( $defaults[ $key ] ) ? $defaults[ $key ] : '#';
+				return 'href="' . $url . '"';
+			},
+			$jsx
+		);
+
+		// Replace image src: src={image.src}
+		$jsx = preg_replace_callback(
+			'/href=\{\s*button\.url\s*\}/',
+			function ( $matches ) use ( $defaults ) {
+				$url = isset( $defaults['button.url'] ) ? $defaults['button.url'] : '#';
+				return 'href="' . $url . '"';
+			},
+			$jsx
+		);
+
+		// Replace image src: src={image.src}
+		$jsx = preg_replace_callback(
+			'/src=\{\s*image\.src\s*\}/',
+			function ( $matches ) use ( $defaults ) {
+				$src = isset( $defaults['image.src'] ) ? $defaults['image.src'] : '';
+				return 'src="' . $src . '"';
+			},
+			$jsx
+		);
+
+		// Replace image alt: alt={image.alt}
+		$jsx = preg_replace_callback(
+			'/alt=\{\s*image\.alt\s*\}/',
+			function ( $matches ) use ( $defaults ) {
+				$alt = isset( $defaults['image.alt'] ) ? $defaults['image.alt'] : '';
+				return 'alt="' . $alt . '"';
+			},
+			$jsx
+		);
+
+		// Replace reviews patterns
+		$jsx = preg_replace_callback(
+			'/\{\s*reviews\.(\w+)\??\s*(?:\.toFixed\s*\(\s*\d+\s*\))?\s*\}/',
+			function ( $matches ) use ( $defaults ) {
+				$key = 'reviews.' . $matches[1];
+				return isset( $defaults[ $key ] ) ? $defaults[ $key ] : '';
+			},
+			$jsx
+		);
+
+		// Handle template literal patterns like: from {reviews.count}+ reviews
+		$jsx = preg_replace_callback(
+			'/from\s*\{\s*reviews\.count\s*\}\+?\s*reviews/',
+			function ( $matches ) use ( $defaults ) {
+				$count = isset( $defaults['reviews.count'] ) ? $defaults['reviews.count'] : '200';
+				return 'from ' . $count . '+ reviews';
+			},
+			$jsx
+		);
+
+		// Clean up any remaining unresolved simple variables (but not nested ones with dots)
+		$jsx = preg_replace( '/\{\s*\w+\s*\}/', '', $jsx );
 
 		return $jsx;
 	}
@@ -280,7 +554,7 @@ class JSXConverter {
 		if ( preg_match( '/<Button([^>]*)>(.*?)<\/Button>/s', $component, $matches ) ) {
 			$attributes = $matches[1];
 			$content = $matches[2];
-			
+
 			// Extract variant attribute
 			$variant = '';
 			if ( preg_match( '/variant=["\']([^"\']+)["\']/', $attributes, $variant_match ) ) {
@@ -288,12 +562,22 @@ class JSXConverter {
 				// Remove variant from attributes (it's not a valid HTML attribute)
 				$attributes = preg_replace( '/\s*variant=["\'][^"\']*["\']/', '', $attributes );
 			}
-			
+
+			// Extract size attribute
+			$size = '';
+			if ( preg_match( '/size=["\']([^"\']+)["\']/', $attributes, $size_match ) ) {
+				$size = $size_match[1];
+				$attributes = preg_replace( '/\s*size=["\'][^"\']*["\']/', '', $attributes );
+			}
+
 			// Add variant as data attribute for later processing
 			if ( ! empty( $variant ) ) {
 				$attributes .= ' data-variant="' . $variant . '"';
 			}
-			
+			if ( ! empty( $size ) ) {
+				$attributes .= ' data-size="' . $size . '"';
+			}
+
 			// Remove any remaining component tags inside
 			$content = preg_replace( '/<[A-Z][a-zA-Z]*\s*\/>/', '', $content );
 			return '<button' . $attributes . '>' . trim( $content ) . '</button>';
@@ -304,16 +588,58 @@ class JSXConverter {
 			return '<p' . $matches[1] . ' data-tagline="true">' . $matches[2] . '</p>';
 		}
 
-		// Handle Image component (Next.js style)
-		if ( preg_match( '/<Image([^>]*)(\/?)>/s', $component, $matches ) ) {
+		// Handle Badge component
+		if ( preg_match( '/<Badge([^>]*)>(.*?)<\/Badge>/s', $component, $matches ) ) {
 			$attributes = $matches[1];
-			$is_self_closing = ! empty( $matches[2] );
-			
-			// Extract src and alt from attributes
+			$content = $matches[2];
+
+			// Extract variant attribute
+			$variant = 'default';
+			if ( preg_match( '/variant=["\']([^"\']+)["\']/', $attributes, $variant_match ) ) {
+				$variant = $variant_match[1];
+				$attributes = preg_replace( '/\s*variant=["\'][^"\']*["\']/', '', $attributes );
+			}
+
+			// Remove any icon components inside
+			$content = preg_replace( '/<[A-Z][a-zA-Z]*\s*[^>]*\/>/', '', $content );
+
+			return '<p' . $attributes . ' data-badge="true" data-variant="' . $variant . '">' . trim( $content ) . '</p>';
+		}
+
+		// Handle Avatar component with nested AvatarImage
+		if ( preg_match( '/<Avatar([^>]*)>(.*?)<\/Avatar>/s', $component, $matches ) ) {
+			$avatar_attributes = $matches[1];
+			$inner_content = $matches[2];
+
+			// Extract className from Avatar
+			$avatar_class = '';
+			if ( preg_match( '/class=["\']([^"\']+)["\']/', $avatar_attributes, $class_match ) ) {
+				$avatar_class = $class_match[1];
+			}
+
+			// Extract src and alt from AvatarImage inside
+			$src = '';
+			$alt = '';
+			if ( preg_match( '/<AvatarImage[^>]*src=["\']([^"\']+)["\'][^>]*>/s', $inner_content, $src_match ) ) {
+				$src = $src_match[1];
+			}
+			if ( preg_match( '/<AvatarImage[^>]*alt=["\']([^"\']+)["\'][^>]*>/s', $inner_content, $alt_match ) ) {
+				$alt = $alt_match[1];
+			}
+
+			// Build the img tag with avatar data attribute
+			$class_attr = ! empty( $avatar_class ) ? ' class="' . $avatar_class . '"' : '';
+			return '<img src="' . $src . '" alt="' . $alt . '"' . $class_attr . ' data-avatar="true"/>';
+		}
+
+		// Handle standalone AvatarImage component
+		if ( preg_match( '/<AvatarImage([^>]*)(\/?)>/s', $component, $matches ) ) {
+			$attributes = $matches[1];
+
 			$src = '';
 			$alt = '';
 			$className = '';
-			
+
 			if ( preg_match( '/src=["\']([^"\']+)["\']/', $attributes, $src_match ) ) {
 				$src = $src_match[1];
 			}
@@ -323,7 +649,30 @@ class JSXConverter {
 			if ( preg_match( '/class=["\']([^"\']+)["\']/', $attributes, $class_match ) ) {
 				$className = ' class="' . $class_match[1] . '"';
 			}
-			
+
+			return '<img src="' . $src . '" alt="' . $alt . '"' . $className . ' data-avatar="true"/>';
+		}
+
+		// Handle Image component (Next.js style)
+		if ( preg_match( '/<Image([^>]*)(\/?)>/s', $component, $matches ) ) {
+			$attributes = $matches[1];
+			$is_self_closing = ! empty( $matches[2] );
+
+			// Extract src and alt from attributes
+			$src = '';
+			$alt = '';
+			$className = '';
+
+			if ( preg_match( '/src=["\']([^"\']+)["\']/', $attributes, $src_match ) ) {
+				$src = $src_match[1];
+			}
+			if ( preg_match( '/alt=["\']([^"\']+)["\']/', $attributes, $alt_match ) ) {
+				$alt = $alt_match[1];
+			}
+			if ( preg_match( '/class=["\']([^"\']+)["\']/', $attributes, $class_match ) ) {
+				$className = ' class="' . $class_match[1] . '"';
+			}
+
 			return '<img src="' . $src . '" alt="' . $alt . '"' . $className . '/>';
 		}
 
@@ -380,6 +729,13 @@ class JSXConverter {
 			} else {
 				$output .= $this->create_group_block( $element, $depth );
 			}
+		} elseif ( $tag === 'span' ) {
+			// Handle span elements - check if it's an avatar container or flex container
+			if ( $this->is_avatar_container( $element ) ) {
+				$output .= $this->create_avatar_stack_block( $element, $depth );
+			} else {
+				$output .= $this->create_group_block( $element, $depth );
+			}
 		} elseif ( in_array( $tag, [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ) ) {
 			$output .= $this->create_heading_block( $element, $depth );
 		} elseif ( $tag === 'p' ) {
@@ -388,6 +744,13 @@ class JSXConverter {
 			$output .= $this->create_button_block( $element, $depth );
 		} elseif ( $tag === 'img' ) {
 			$output .= $this->create_image_block( $element, $depth );
+		} elseif ( $tag === 'a' ) {
+			// Handle anchor tags - extract content and pass to children
+			foreach ( $element->childNodes as $child ) {
+				if ( $child->nodeType === XML_ELEMENT_NODE ) {
+					$output .= $this->convert_element_to_block( $child, $depth );
+				}
+			}
 		} else {
 			// Fallback: process children
 			foreach ( $element->childNodes as $child ) {
@@ -396,6 +759,92 @@ class JSXConverter {
 				}
 			}
 		}
+
+		return $output;
+	}
+
+	/**
+	 * Check if element is an avatar container (contains multiple avatar images)
+	 */
+	private function is_avatar_container( $element ) {
+		$classes = $element->hasAttribute( 'class' ) ? $element->getAttribute( 'class' ) : '';
+
+		// Check for common avatar container patterns
+		if ( strpos( $classes, '-space-x' ) !== false || strpos( $classes, 'inline-flex' ) !== false ) {
+			// Count img children with data-avatar
+			$avatar_count = 0;
+			foreach ( $element->childNodes as $child ) {
+				if ( $child->nodeType === XML_ELEMENT_NODE ) {
+					$child_tag = strtolower( $child->tagName );
+					if ( $child_tag === 'img' && $child->hasAttribute( 'data-avatar' ) ) {
+						$avatar_count++;
+					}
+				}
+			}
+			return $avatar_count >= 2;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Create avatar stack block (group with overlapping images)
+	 */
+	private function create_avatar_stack_block( $element, $depth = 0 ) {
+		$indent = str_repeat( "\t", $depth );
+		$classes = $element->getAttribute( 'class' );
+
+		// Parse classes for overlap margin
+		$overlap_margin = '-16px'; // Default overlap
+		if ( preg_match( '/-space-x-(\d+)/', $classes, $matches ) ) {
+			$overlap_margin = '-' . ( intval( $matches[1] ) * 4 ) . 'px';
+		}
+
+		// Build group block for avatar container
+		$output = $indent . '<!-- wp:group {"className":"mx-auto mt-10 w-fit sm:flex-row","style":{"spacing":{"blockGap":"0"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"center"}} -->' . "\n";
+		$output .= $indent . '<div class="wp-block-group mx-auto mt-10 w-fit sm:flex-row">';
+
+		$is_first = true;
+		foreach ( $element->childNodes as $child ) {
+			if ( $child->nodeType === XML_ELEMENT_NODE ) {
+				$child_tag = strtolower( $child->tagName );
+
+				if ( $child_tag === 'img' ) {
+					$src = $child->hasAttribute( 'src' ) ? $child->getAttribute( 'src' ) : '';
+					$alt = $child->hasAttribute( 'alt' ) ? $child->getAttribute( 'alt' ) : '';
+					$child_classes = $child->hasAttribute( 'class' ) ? $child->getAttribute( 'class' ) : '';
+
+					// Extract size from classes (size-12 = 48px, size-14 = 56px)
+					$size = '54px'; // Default avatar size
+					if ( preg_match( '/size-(\d+)/', $child_classes, $size_match ) ) {
+						$size = ( intval( $size_match[1] ) * 4 ) . 'px';
+					}
+
+					// Build image block attributes
+					$img_attrs = array(
+						'"width":"' . $size . '"',
+						'"height":"' . $size . '"',
+						'"scale":"cover"',
+						'"sizeSlug":"large"',
+						'"style":{"border":{"radius":"100px","width":"1px"}' . ( ! $is_first ? ',"spacing":{"margin":{"left":"' . $overlap_margin . '"}}' : '' ) . '}',
+						'"borderColor":"muted"',
+					);
+
+					$margin_style = ! $is_first ? ' style="margin-left:' . $overlap_margin . '"' : '';
+
+					$output .= '<!-- wp:image {' . implode( ',', $img_attrs ) . '} -->' . "\n";
+					$output .= '<figure class="wp-block-image size-large is-resized has-custom-border"' . $margin_style . '>';
+					$output .= '<img src="' . esc_attr( $src ) . '" alt="' . esc_attr( $alt ) . '" class="has-border-color has-muted-border-color" style="border-width:1px;border-radius:100px;object-fit:cover;width:' . $size . ';height:' . $size . '"/>';
+					$output .= '</figure>' . "\n";
+					$output .= '<!-- /wp:image -->' . "\n\n";
+
+					$is_first = false;
+				}
+			}
+		}
+
+		$output .= '</div>' . "\n";
+		$output .= $indent . '<!-- /wp:group -->' . "\n\n";
 
 		return $output;
 	}
@@ -669,12 +1118,30 @@ class JSXConverter {
 		$classes = $element->getAttribute( 'class' );
 		$content = $this->get_element_text_content( $element );
 		$is_tagline = $element->hasAttribute( 'data-tagline' );
+		$is_badge = $element->hasAttribute( 'data-badge' );
+		$badge_variant = $element->hasAttribute( 'data-variant' ) ? $element->getAttribute( 'data-variant' ) : 'default';
 
 		$block_attrs = $this->parse_classes_to_attributes( $classes );
 
 		// Build attributes
 		$attrs = array();
-		
+
+		// Handle Badge component
+		if ( $is_badge ) {
+			$style_class = 'is-style-badge';
+			if ( $badge_variant === 'outline' ) {
+				$style_class = 'is-style-badge-outline';
+			}
+			if ( empty( $block_attrs['className'] ) ) {
+				$block_attrs['className'] = $style_class;
+			} else {
+				$block_attrs['className'] .= ' ' . $style_class;
+			}
+			if ( empty( $block_attrs['fontSize'] ) ) {
+				$block_attrs['fontSize'] = 'sm';
+			}
+		}
+
 		if ( $is_tagline ) {
 			$attrs[] = '"metadata":{"name":"Subtitle"}';
 			if ( empty( $block_attrs['className'] ) ) {
@@ -736,6 +1203,13 @@ class JSXConverter {
 		$indent = str_repeat( "\t", $depth );
 		$classes = $element->getAttribute( 'class' );
 		$content = $this->get_element_text_content( $element );
+
+		$url = '';
+		foreach ( $element->childNodes as $node ) {
+			if ( $node->tagName === 'a' ) {
+				$url = $node->getAttribute( 'href' );
+			}
+		}
 		
 		// Get variant from data attribute
 		$variant = $element->hasAttribute( 'data-variant' ) ? $element->getAttribute( 'data-variant' ) : '';
@@ -746,8 +1220,9 @@ class JSXConverter {
 		$output = $indent . '<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->' . "\n";
 		$output .= $indent . '<div class="wp-block-buttons">' . "\n";
 
+		$size = 'md';
 		// Build button attributes
-		$attrs = array();
+		$attrs = array( '"size":"' . esc_attr( $size ) . '"' );
 		
 		// Add variant as className for block styles
 		if ( ! empty( $variant ) && $this->is_valid_button_variant( $variant ) ) {
@@ -764,7 +1239,7 @@ class JSXConverter {
 		$attrs_string = ! empty( $attrs ) ? ' {' . implode( ',', $attrs ) . '}' : '';
 
 		// Build CSS classes for button div
-		$button_div_classes = array( 'wp-block-button' );
+		$button_div_classes = array( 'wp-block-button', 'is-size-' . esc_attr( $size ) );
 		if ( ! empty( $variant ) && $this->is_valid_button_variant( $variant ) ) {
 			$button_div_classes[] = 'is-style-' . esc_attr( $variant );
 		}
@@ -787,7 +1262,7 @@ class JSXConverter {
 
 		$output .= $indent . "\t" . '<!-- wp:button' . $attrs_string . ' -->' . "\n";
 		$output .= $indent . "\t" . '<div class="' . implode( ' ', $button_div_classes ) . '">';
-		$output .= '<a class="' . implode( ' ', $link_classes ) . '">';
+		$output .= '<a class="' . implode( ' ', $link_classes ) . '" href="' . esc_attr( $url ) . '">';
 		$output .= esc_html( $content );
 		$output .= '</a></div>' . "\n";
 		$output .= $indent . "\t" . '<!-- /wp:button -->' . "\n";
@@ -1031,7 +1506,7 @@ class JSXConverter {
 				continue;
 			}
 
-			// Padding classes
+			// Padding classes - all directions (p-4)
 			if ( preg_match( '/^p-(\d+)$/', $class, $matches ) ) {
 				$spacing = $matches[1];
 				if ( ! isset( $attrs['style']['spacing']['padding'] ) ) {
@@ -1046,7 +1521,24 @@ class JSXConverter {
 				continue;
 			}
 
-			// Individual padding
+			// Padding classes - axis (py-4, px-4)
+			if ( preg_match( '/^p([xy])-(\d+)$/', $class, $matches ) ) {
+				$axis = $matches[1];
+				$spacing = $matches[2];
+				if ( ! isset( $attrs['style']['spacing']['padding'] ) ) {
+					$attrs['style']['spacing']['padding'] = array();
+				}
+				if ( $axis === 'y' ) {
+					$attrs['style']['spacing']['padding']['top'] = 'var:preset|spacing|' . $spacing;
+					$attrs['style']['spacing']['padding']['bottom'] = 'var:preset|spacing|' . $spacing;
+				} else { // x
+					$attrs['style']['spacing']['padding']['left'] = 'var:preset|spacing|' . $spacing;
+					$attrs['style']['spacing']['padding']['right'] = 'var:preset|spacing|' . $spacing;
+				}
+				continue;
+			}
+
+			// Individual padding (pt-4, pb-4, pl-4, pr-4)
 			if ( preg_match( '/^p([tblr])-(\d+)$/', $class, $matches ) ) {
 				$side_map = array( 't' => 'top', 'b' => 'bottom', 'l' => 'left', 'r' => 'right' );
 				$side = $side_map[ $matches[1] ];
@@ -1134,6 +1626,73 @@ class JSXConverter {
 				}
 			}
 
+			// Size utilities (size-12 = 48px, size-14 = 56px, etc.)
+			if ( preg_match( '/^size-(\d+)$/', $class, $matches ) ) {
+				$size_px = intval( $matches[1] ) * 4 . 'px';
+				if ( ! isset( $attrs['style']['dimensions'] ) ) {
+					$attrs['style']['dimensions'] = array();
+				}
+				$attrs['style']['dimensions']['width'] = $size_px;
+				$attrs['style']['dimensions']['height'] = $size_px;
+				continue;
+			}
+
+			// Negative space classes for overlap effect (-space-x-4)
+			if ( preg_match( '/^-space-x-(\d+)$/', $class, $matches ) ) {
+				$margin = '-' . ( intval( $matches[1] ) * 4 ) . 'px';
+				$attrs['overlapMargin'] = $margin;
+				$remaining_classes[] = $class; // Keep for reference
+				continue;
+			}
+
+			// Margin classes - all directions (m-4)
+			if ( preg_match( '/^m-(\d+)$/', $class, $matches ) ) {
+				$spacing = $matches[1];
+				if ( ! isset( $attrs['style']['spacing']['margin'] ) ) {
+					$attrs['style']['spacing']['margin'] = array();
+				}
+				$attrs['style']['spacing']['margin'] = array(
+					'top' => 'var:preset|spacing|' . $spacing,
+					'right' => 'var:preset|spacing|' . $spacing,
+					'bottom' => 'var:preset|spacing|' . $spacing,
+					'left' => 'var:preset|spacing|' . $spacing,
+				);
+				continue;
+			}
+
+			// Margin classes - axis and individual (my-6, mx-4, mb-8, etc.)
+			if ( preg_match( '/^m([tbylrx])-(\d+)$/', $class, $matches ) ) {
+				$side_map = array(
+					't' => array( 'top' ),
+					'b' => array( 'bottom' ),
+					'l' => array( 'left' ),
+					'r' => array( 'right' ),
+					'y' => array( 'top', 'bottom' ),
+					'x' => array( 'left', 'right' ),
+				);
+				$sides = $side_map[ $matches[1] ];
+				$spacing = $matches[2];
+				if ( ! isset( $attrs['style']['spacing']['margin'] ) ) {
+					$attrs['style']['spacing']['margin'] = array();
+				}
+				foreach ( $sides as $side ) {
+					$attrs['style']['spacing']['margin'][ $side ] = 'var:preset|spacing|' . $spacing;
+				}
+				continue;
+			}
+
+			// All responsive classes (sm:, md:, lg:, xl:, 2xl:) - preserve as-is
+			if ( preg_match( '/^(sm|md|lg|xl|2xl):/', $class ) ) {
+				$remaining_classes[] = $class;
+				continue;
+			}
+
+			// Text utility classes to preserve
+			if ( in_array( $class, array( 'text-pretty', 'text-balance', 'text-wrap', 'truncate', 'whitespace-nowrap' ) ) ) {
+				$remaining_classes[] = $class;
+				continue;
+			}
+
 			// Keep other classes
 			$remaining_classes[] = $class;
 		}
@@ -1180,7 +1739,7 @@ class JSXConverter {
 	private function get_element_text_content( $element ) {
 		$content = '';
 		foreach ( $element->childNodes as $node ) {
-			if ( $node->nodeType === XML_TEXT_NODE ) {
+			if ( $node->nodeType === XML_TEXT_NODE || ( $node->nodeType === XML_ELEMENT_NODE && $node->tagName === 'a' ) ) {
 				$content .= ' ' . $node->nodeValue;
 			}
 		}

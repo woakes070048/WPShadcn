@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "Badge Outline",
+	"slug": "badge-outline",
+	"blockTypes": ["core/paragraph"],
+	"styles": {
+		"css": "width: fit-content",
+		"typography": {
+			"fontSize": "14px",
+			"lineHeight": "1.5",
+			"letterSpacing": "normal"
+		},
+		"border": {
+			"color": "currentColor",
+			"style": "solid",
+			"width": "1px",
+			"radius": "16px"
+		},
+		"spacing": {
+			"padding": {
+				"top": "0.25rem",
+				"right": "1rem",
+				"bottom": "0.25rem",
+				"left": "1rem"
+			}
+		},
+		"elements": {
+			"link": {
+				"typography": {
+					"textDecoration": "none"
+				}
+			}
+		}
+	}
+}

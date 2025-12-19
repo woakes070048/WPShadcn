@@ -1,0 +1,43 @@
+.block-editor-block-list__block.wp-block-button:where(
+[style*="--hover-color"]
+):hover .wp-element-button,.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-color"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-color"]) .wp-element-button:hover,:where([style*="--hover-color"]):not(
+.wp-block-button,.block-editor-block-list__block.wp-block-woocommerce-product-button
+):hover{color:var(--hover-color)!important}.block-editor-block-list__block.wp-block-button:where(
+[style*="--hover-background-color"]
+):hover .wp-element-button,.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-background-color"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-background-color"]) .wp-element-button:hover,:where([style*="--hover-background-color"]):not(
+.wp-block-button,.block-editor-block-list__block.wp-block-woocommerce-product-button
+):hover{background:var(--hover-background-color)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-w"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-w"]) .wp-element-button:hover,:where([style*="--hover-border-w"]):not(.wp-block-button):hover{border-width:var(--hover-border-w)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-c"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-c"]) .wp-element-button:hover,:where([style*="--hover-border-c"]):not(.wp-block-button):hover{border-color:var(--hover-border-c)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-s"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-s"]) .wp-element-button:hover,:where([style*="--hover-border-s"]):not(.wp-block-button):hover{border-style:var(--hover-border-s)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-left-w"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-left-w"]) .wp-element-button:hover,:where([style*="--hover-border-left-w"]):not(.wp-block-button):hover{border-left-width:var(--hover-border-left-w)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-left-c"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-left-c"]) .wp-element-button:hover,:where([style*="--hover-border-left-c"]):not(.wp-block-button):hover{border-left-color:var(--hover-border-left-c)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-left-s"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-left-s"]) .wp-element-button:hover,:where([style*="--hover-border-left-s"]):not(.wp-block-button):hover{border-left-style:var(--hover-border-left-s)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-right-w"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-right-w"]) .wp-element-button:hover,:where([style*="--hover-border-right-w"]):not(.wp-block-button):hover{border-right-width:var(--hover-border-right-w)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-right-c"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-right-c"]) .wp-element-button:hover,:where([style*="--hover-border-right-c"]):not(.wp-block-button):hover{border-right-color:var(--hover-border-right-c)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-right-s"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-right-s"]) .wp-element-button:hover,:where([style*="--hover-border-right-s"]):not(.wp-block-button):hover{border-right-style:var(--hover-border-right-s)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-bottom-w"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-bottom-w"]) .wp-element-button:hover,:where([style*="--hover-border-bottom-w"]):not(.wp-block-button):hover{border-bottom-width:var(--hover-border-bottom-w)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-bottom-c"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-bottom-c"]) .wp-element-button:hover,:where([style*="--hover-border-bottom-c"]):not(.wp-block-button):hover{border-bottom-color:var(--hover-border-bottom-c)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-bottom-s"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-bottom-s"]) .wp-element-button:hover,:where([style*="--hover-border-bottom-s"]):not(.wp-block-button):hover{border-bottom-style:var(--hover-border-bottom-s)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-top-w"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-top-w"]) .wp-element-button:hover,:where([style*="--hover-border-top-w"]):not(.wp-block-button):hover{border-top-width:var(--hover-border-top-w)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-top-c"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-top-c"]) .wp-element-button:hover,:where([style*="--hover-border-top-c"]):not(.wp-block-button):hover{border-top-color:var(--hover-border-top-c)!important}.block-editor-block-list__block.wp-block-woocommerce-product-button:where(
+[style*="--hover-border-top-s"]
+):hover .wp-element-button,.wp-block-button:where([style*="--hover-border-top-s"]) .wp-element-button:hover,:where([style*="--button-hover-border-top-s"]):not(.wp-block-button):hover{border-top-style:var(--button-hover-border-top-s)!important}

@@ -129,6 +129,10 @@ button[disabled] {
   opacity: 0.5;
 }
 
+fieldset {
+  border: 1px solid var(--border);
+}
+
 /* ==========================================================================
    Button Styles (Shadcn inspired)
    ========================================================================== */
@@ -435,7 +439,10 @@ textarea,
 .wc-block-components-text-input input[type="tel"],
 .wc-block-components-text-input textarea,
 select,
-.wc-blocks-components-select .wc-blocks-components-select__select {
+.wc-blocks-components-select .wc-blocks-components-select__select,
+.woocommerce-page form .form-row input.input-text,
+.woocommerce-page form .form-row select,
+.woocommerce-page form .form-row textarea.input-text {
   background-color: transparent;
   color: var(--foreground) !important;
   border-width: 1px !important;
@@ -537,7 +544,13 @@ textarea:focus,
 select:focus-visible,
 select:focus,
 .wc-blocks-components-select .wc-blocks-components-select__select:focus-visible,
-.wc-blocks-components-select .wc-blocks-components-select__select:focus {
+.wc-blocks-components-select .wc-blocks-components-select__select:focus,
+.woocommerce-page form .form-row input.input-text:focus-visible,
+.woocommerce-page form .form-row input.input-text:focus,
+.woocommerce-page form .form-row select:focus-visible,
+.woocommerce-page form .form-row select:focus,
+.woocommerce-page form .form-row textarea.input-text:focus-visible,
+.woocommerce-page form .form-row textarea.input-text:focus {
   outline: none;
   border-color: var(--ring);
   box-shadow: 0 0 0 3px color-mix(in oklab, oklch(70.8% 0 0) 50%, transparent);

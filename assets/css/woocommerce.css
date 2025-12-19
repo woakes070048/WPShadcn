@@ -2,6 +2,14 @@
    WooCommerce Styles
    ========================================================================== */
 
+.wc-block-components-drawer {
+  background: transparent;
+}
+
+.wc-block-components-drawer {
+  border-color: var(--border);
+}
+
 .wc-block-components-drawer__screen-overlay {
   background-color: color-mix(in oklab, #000 50%, transparent);
 }
@@ -73,6 +81,10 @@ WooCommerce Cart Items Block
   color: var(--background);
 }
 
+.wc-block-mini-cart__footer {
+  border-color: var(--border);
+}
+
 .wc-block-components-drawer:after,
 .wc-block-mini-cart__footer:after {
   border-color: var(--border);
@@ -81,6 +93,10 @@ WooCommerce Cart Items Block
 
 .wp-block-woocommerce-mini-cart-title-block.wc-block-mini-cart__title {
   font-size: 1rem;
+}
+
+.wc-block-components-quantity-selector {
+  border: none;
 }
 
 .wc-block-components-quantity-selector:after {
@@ -387,11 +403,6 @@ Order Summary Block Styles
 
 .wc-block-checkout__terms.wc-block-checkout__terms--with-separator {
   border-color: var(--border);
-}
-
-.wc-block-components-radio-control--highlight-checked
-  div.wc-block-components-radio-control-accordion-option:after {
-  background: var(--border);
 }
 
 /* ==========================================================================

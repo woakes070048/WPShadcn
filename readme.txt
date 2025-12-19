@@ -3,7 +3,7 @@ Contributors: yaycommerce
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Tags: blog, block-patterns, full-site-editing
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 5.3
 Stable tag: 1.0.4
 
@@ -55,20 +55,6 @@ A: When creating or editing pages/posts, look for the "Patterns" section in the 
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release
-* Modern block-based theme architecture
-* Dark mode support
-* Responsive design
-* Block patterns for quick content creation
-
-= 1.0.1 =
-* Fixed: Some small issues
-
-= 1.0.2 =
-* Update Navigation style
-* Update layout
-
 = 1.0.4 =
 * Added: Support WooCommerce Cart/Checkout template
 * Added: WooCommerce Checkout header
@@ -79,6 +65,20 @@ A: When creating or editing pages/posts, look for the "Patterns" section in the 
 * Updated: Navigation styles
 * Updated: Integrate with WooCommerce 10.4
 * Fixed: Header menu issue
+
+= 1.0.2 =
+* Update Navigation style
+* Update layout
+
+= 1.0.1 =
+* Fixed: Some small issues
+
+= 1.0.0 =
+* Initial release
+* Modern block-based theme architecture
+* Dark mode support
+* Responsive design
+* Block patterns for quick content creation
 
 == Support ==
 

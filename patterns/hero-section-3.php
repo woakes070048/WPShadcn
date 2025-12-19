@@ -7,8 +7,8 @@
  */
 
 ?>
-<!-- wp:group {"metadata":{"categories":["shadcn","shadcn-banner"],"patternName":"shadcn/hero-section-3","name":"Hero Section 3"},"align":"wide","layout":{"type":"default"}} -->
-<div class="wp-block-group alignwide"><!-- wp:group {"className":"container lg:grid-cols-2 lg:gap-20","style":{"spacing":{"blockGap":"var:preset|spacing|10"}},"layout":{"type":"grid","minimumColumnWidth":"26rem"}} -->
+<!-- wp:group {"metadata":{"categories":["shadcn"],"patternName":"shadcn/hero-section-3","name":"Hero Section 3"},"align":"wide","layout":{"type":"default"}} -->
+<div class="wp-block-group alignwide"><!-- wp:group {"className":"container lg:grid-cols-2 lg:gap-20","style":{"spacing":{"blockGap":"var:preset|spacing|10"}},"layout":{"type":"grid","minimumColumnWidth":"32rem"}} -->
 <div class="wp-block-group container lg:grid-cols-2 lg:gap-20"><!-- wp:group {"className":"mx-auto has-text-align-center md:ml-auto lg:max-w-3xl lg:items-start lg:text-left","layout":{"type":"flex","orientation":"vertical","verticalAlignment":"center","justifyContent":"center"}} -->
 <div class="wp-block-group mx-auto has-text-align-center md:ml-auto lg:max-w-3xl lg:items-start lg:text-left"><!-- wp:heading {"level":1,"className":"my-6 text-pretty lg:text-6xl xl:text-7xl"} -->
 <h1 class="wp-block-heading my-6 text-pretty lg:text-6xl xl:text-7xl">Blocks built with Shadcn &amp; Tailwind</h1>

@@ -20,7 +20,7 @@
 <!-- /wp:group -->
 
 <!-- wp:group {"className":"sm:grid-cols-2 lg:grid-cols-3","style":{"spacing":{"blockGap":"var:preset|spacing|6","margin":{"top":"var:preset|spacing|10"}}}} -->
-<div class="wp-block-group sm:grid-cols-2 lg:grid-cols-3" style="margin-top:var(--wp--preset--spacing--10)"><!-- wp:group {"layout":{"type":"grid","minimumColumnWidth":"22rem"}} -->
+<div class="wp-block-group sm:grid-cols-2 lg:grid-cols-3" style="margin-top:var(--wp--preset--spacing--10)"><!-- wp:group {"layout":{"type":"grid","minimumColumnWidth":"23rem"}} -->
 <div class="wp-block-group"><!-- wp:group {"className":"is-style-card","style":{"spacing":{"padding":{"top":"var:preset|spacing|6","bottom":"var:preset|spacing|6","left":"var:preset|spacing|6","right":"var:preset|spacing|6"},"blockGap":"var:preset|spacing|4"},"layout":{"columnSpan":1,"rowSpan":1}},"layout":{"type":"constrained"}} -->
 <div class="wp-block-group is-style-card" style="padding-top:var(--wp--preset--spacing--6);padding-right:var(--wp--preset--spacing--6);padding-bottom:var(--wp--preset--spacing--6);padding-left:var(--wp--preset--spacing--6)"><!-- wp:heading {"textAlign":"left","level":5} -->
 <h5 class="wp-block-heading has-text-align-left">Monitor Your Metrics Effortlessly and Accurately.</h5>

@@ -10,6 +10,7 @@ class Blocks {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_pattern_category' ), 1 );
 		add_action( 'init', array( $this, 'register_block_settings' ), 1 );
+		add_action( 'init', array( $this, 'register_blocks' ), 1 );
 	}
 
 	public function register_pattern_category() {
@@ -34,6 +35,10 @@ class Blocks {
 
 	public function register_block_settings() {
 		require_once __DIR__ . '/../BlockSettings/BlockSettingsBootstrap.php';
+	}
+
+	public function register_blocks() {
+		require_once __DIR__ . '/../Blocks/SvgImage/Caller.php';
 	}
 }
 

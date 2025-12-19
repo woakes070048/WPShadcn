@@ -17,6 +17,8 @@
   var BaseControl = wp.components.BaseControl;
   var Button = wp.components.Button;
   var useSetting = wp.blockEditor.useSetting;
+  var UnitControl =
+    wp.components.__experimentalUnitControl || wp.components.UnitControl;
 
   /**
    * Register svgCode attribute on core/image block.
@@ -32,6 +34,10 @@
         default: "",
       },
       svgColor: {
+        type: "string",
+        default: "",
+      },
+      svgSize: {
         type: "string",
         default: "",
       },
@@ -58,6 +64,7 @@
       attributes: {
         svgCode: "",
         svgColor: "",
+        svgSize: "",
       },
       isActive: function (blockAttributes) {
         return !!blockAttributes.svgCode;
@@ -98,6 +105,7 @@
         var isSelected = props.isSelected;
         var svgCode = attributes.svgCode || "";
         var svgColor = attributes.svgColor || "";
+        var svgSize = attributes.svgSize || "";
         var sanitizedSvg = sanitizeSvgForPreview(svgCode);
         var hasSvg = !!sanitizedSvg;
 
@@ -107,6 +115,9 @@
         var wrapperStyle = {};
         if (hasSvg && svgColor) {
           wrapperStyle.color = svgColor;
+        }
+        if (hasSvg && svgSize) {
+          wrapperStyle.width = svgSize;
         }
 
         var blockProps = useBlockProps({
@@ -147,18 +158,40 @@
             )
         );
 
-        var colorPanel = hasSvg
+        var settingsPanel = hasSvg
           ? el(
               PanelBody,
               {
-                title: __("SVG Color", "shadcn"),
+                title: __("SVG Settings", "shadcn"),
                 initialOpen: true,
               },
               el(
                 BaseControl,
                 {
+                  label: __("Size", "shadcn"),
+                  __nextHasNoMarginBottom: true,
+                },
+                el(UnitControl, {
+                  value: svgSize,
+                  onChange: function (value) {
+                    setAttributes({ svgSize: value || "" });
+                  },
+                  units: [
+                    { value: "px", label: "px", default: 100 },
+                    { value: "%", label: "%", default: 50 },
+                    { value: "em", label: "em", default: 10 },
+                    { value: "rem", label: "rem", default: 10 },
+                    { value: "vw", label: "vw", default: 10 },
+                  ],
+                  __nextHasNoMarginBottom: true,
+                })
+              ),
+              el(
+                BaseControl,
+                {
                   label: __("Fill Color", "shadcn"),
                   help: __("Sets color for SVG elements using currentColor.", "shadcn"),
+                  __nextHasNoMarginBottom: true,
                 },
                 el(ColorPalette, {
                   colors: themeColors,
@@ -174,7 +207,7 @@
 
         var inspectorControls =
           isSelected || hasSvg
-            ? el(InspectorControls, null, svgEditPanel, colorPanel)
+            ? el(InspectorControls, null, svgEditPanel, settingsPanel)
             : null;
 
         // If SVG code exists, show SVG preview

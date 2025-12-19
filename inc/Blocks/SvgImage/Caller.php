@@ -42,6 +42,10 @@ class Caller {
 				'type'    => 'string',
 				'default' => '',
 			);
+			$settings['attributes']['svgSize'] = array(
+				'type'    => 'string',
+				'default' => '',
+			);
 		}
 
 		return $settings;
@@ -107,10 +111,10 @@ class Caller {
 		// Build inline styles.
 		$styles = array();
 
-		// Get width if set.
-		$width = $block['attrs']['width'] ?? '';
-		if ( $width ) {
-			$styles[] = 'width: ' . esc_attr( $width );
+		// Get size if set.
+		$svg_size = $block['attrs']['svgSize'] ?? '';
+		if ( $svg_size ) {
+			$styles[] = 'width: ' . esc_attr( $svg_size );
 		}
 
 		// Get color if set.

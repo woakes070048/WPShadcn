@@ -73,7 +73,11 @@ A: When creating or editing pages/posts, look for the "Patterns" section in the 
 * Added: Support WooCommerce Cart/Checkout template
 * Added: WooCommerce Checkout header
 * Added: New patterns (404 section, Hero section, CTA section, ...)
+* Added: Block hover settings
+* Added: SVG Image block variation
+* Added: 5 Features patterns
 * Updated: Navigation styles
+* Updated: Integrate with WooCommerce 10.4
 * Fixed: Header menu issue
 
 == Support ==
